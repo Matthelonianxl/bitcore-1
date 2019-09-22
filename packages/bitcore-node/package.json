@@ -37,7 +37,9 @@
     "api": "npm run tsc && node build/src/workers/api.js",
     "api:cluster": "npm run tsc && node build/src/workers/api.js --CLUSTER true",
     "pruning": "npm run tsc && node build/src/workers/pruning.js --EXIT true",
-    "p2p": "npm run tsc && node build/src/workers/p2p.js"
+    "p2p": "npm run tsc && node build/src/workers/p2p.js",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "keywords": [
     "bitcore-node",
@@ -101,6 +103,8 @@
     "through2": "^2.0.3",
     "underscore": "^1.8.3",
     "web3": "1.0.0-beta.36",
-    "winston": "^2.3.9"
-  }
+    "winston": "^2.3.9",
+    "snyk": "^1.189.0"
+  },
+  "snyk": true
 }
