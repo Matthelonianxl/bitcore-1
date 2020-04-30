@@ -9,7 +9,9 @@
     "test": "gulp test",
     "test:ci": "npm run test",
     "coverage": "gulp coverage",
-    "build": "gulp"
+    "build": "gulp",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "keywords": [
     "bitcoin",
@@ -40,7 +42,8 @@
     "buffer-compare": "=1.1.1",
     "elliptic": "=6.4.0",
     "inherits": "=2.0.1",
-    "lodash": "=4.17.11"
+    "lodash": "=4.17.11",
+    "snyk": "^1.316.1"
   },
   "devDependencies": {
     "bitcore-build": "^8.3.0",
@@ -50,5 +53,6 @@
     "karma-phantomjs-launcher": "^1.0.4",
     "sinon": "^7.1.1"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "snyk": true
 }
