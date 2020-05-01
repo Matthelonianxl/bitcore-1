@@ -7,7 +7,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "dependencies": {
     "@material-ui/core": "^3.9.2",
@@ -29,7 +31,8 @@
     "semantic-ui-css": "^2.4.1",
     "semantic-ui-react": "^0.84.0",
     "socket.io-client": "^2.2.0",
-    "typescript": "3.2.4"
+    "typescript": "3.2.4",
+    "snyk": "^1.316.1"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -53,5 +56,6 @@
     "@types/react-swipeable-views": "^0.12.2",
     "@types/semantic-ui": "^2.2.6",
     "@types/socket.io-client": "^1.4.32"
-  }
+  },
+  "snyk": true
 }
