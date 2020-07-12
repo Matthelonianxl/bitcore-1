@@ -1,15 +1,17 @@
-# Javascript Node CircleCI 2.0 configuration file
-# Check https://circleci.com/docs/2.0/language-javascript/ for more details
-version: 2
+version: 2.1
+orbs:
+  node: circleci/node@1.1.6
 jobs:
-  build:
-    machine:
-      image: circleci/classic:latest
-      docker_layer_caching: true
-    working_directory: ~/bitcore
+  build-and-test:
+    executor:
+      name: node/default
     steps:
       - checkout
-
-      - run:
-          name: Build service
-          command: npm run test:ci
+      - node/with-cache:
+          steps:
+            - run: npm install
+            - run: npm test
+workflows:
+    build-and-test:
+      jobs:
+        - build-and-test
