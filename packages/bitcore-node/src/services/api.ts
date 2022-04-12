@@ -1,11 +1,11 @@
 import * as http from 'http';
-import app from '../routes';
-import logger from '../logger';
 import config from '../config';
 import { LoggifyClass } from '../decorators/Loggify';
-import { Storage, StorageService } from './storage';
+import logger from '../logger';
+import app from '../routes';
+import { Config, ConfigService } from './config';
 import { Socket, SocketService } from './socket';
-import { ConfigService, Config } from './config';
+import { Storage, StorageService } from './storage';
 
 @LoggifyClass
 export class ApiService {
@@ -15,6 +15,7 @@ export class ApiService {
   storageService: StorageService;
   socketService: SocketService;
   httpServer: http.Server;
+  app: typeof app;
   stopped = true;
 
   constructor({
@@ -29,12 +30,13 @@ export class ApiService {
     this.configService = configService;
     this.storageService = storageService;
     this.socketService = socketService;
+    this.app = app;
     this.httpServer = new http.Server(app);
   }
 
   async start() {
     if (this.configService.isDisabled('api')) {
-      logger.info(`Disabled API Service`);
+      logger.info('Disabled API Service');
       return;
     }
     if (!this.storageService.connected) {
@@ -42,6 +44,7 @@ export class ApiService {
     }
     if (this.stopped) {
       this.stopped = false;
+      this.httpServer = new http.Server(app);
       this.httpServer.timeout = this.timeout;
       this.httpServer.listen(this.port, () => {
         logger.info(`Starting API Service on port ${this.port}`);
@@ -51,10 +54,15 @@ export class ApiService {
     return this.httpServer;
   }
 
-  stop() {
+  async stop() {
     this.stopped = true;
+    await this.socketService.stop();
     return new Promise(resolve => {
-      this.httpServer.close(resolve);
+      this.httpServer.close(() => {
+        logger.info('Stopped API Service');
+        resolve();
+      });
+      this.httpServer.emit('close');
     });
   }
 }

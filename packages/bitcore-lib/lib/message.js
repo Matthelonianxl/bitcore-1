@@ -11,7 +11,6 @@ var sha256sha256 = require('./crypto/hash').sha256sha256;
 var JSUtil = require('./util/js');
 var $ = require('./util/preconditions');
 
-
 function Message(message) {
   if (!(this instanceof Message)) {
     return new Message(message);
@@ -22,11 +21,11 @@ function Message(message) {
   return this;
 }
 
-Message.MAGIC_BYTES = new Buffer('Bitcoin Signed Message:\n');
+Message.MAGIC_BYTES = Buffer.from('Bitcoin Signed Message:\n');
 
 Message.prototype.magicHash = function magicHash() {
   var prefix1 = BufferWriter.varintBufNum(Message.MAGIC_BYTES.length);
-  var messageBuffer = new Buffer(this.message);
+  var messageBuffer = Buffer.from(this.message);
   var prefix2 = BufferWriter.varintBufNum(messageBuffer.length);
   var buf = Buffer.concat([prefix1, Message.MAGIC_BYTES, prefix2, messageBuffer]);
   var hash = sha256sha256(buf);
@@ -34,8 +33,7 @@ Message.prototype.magicHash = function magicHash() {
 };
 
 Message.prototype._sign = function _sign(privateKey) {
-  $.checkArgument(privateKey instanceof PrivateKey,
-    'First argument should be an instance of PrivateKey');
+  $.checkArgument(privateKey instanceof PrivateKey, 'First argument should be an instance of PrivateKey');
   var hash = this.magicHash();
   var ecdsa = new ECDSA();
   ecdsa.hashbuf = hash;
@@ -83,7 +81,7 @@ Message.prototype.verify = function verify(bitcoinAddress, signatureString) {
   if (_.isString(bitcoinAddress)) {
     bitcoinAddress = Address.fromString(bitcoinAddress);
   }
-  var signature = Signature.fromCompact(new Buffer(signatureString, 'base64'));
+  var signature = Signature.fromCompact(Buffer.from(signatureString, 'base64'));
 
   // recover the public key
   var ecdsa = new ECDSA();
@@ -100,6 +98,39 @@ Message.prototype.verify = function verify(bitcoinAddress, signatureString) {
   }
 
   return this._verify(publicKey, signature);
+};
+
+/**
+ * Will return a public key string if the provided signature and the message digest is correct
+ * If it isn't the specific reason is accessible via the "error" member.
+ *
+ * @param {Address|String} bitcoinAddress - A bitcoin address
+ * @param {String} signatureString - A base64 encoded compact signature
+ * @returns {String}
+ */
+Message.prototype.recoverPublicKey = function recoverPublicKey(bitcoinAddress, signatureString) {
+  $.checkArgument(bitcoinAddress);
+  $.checkArgument(signatureString && _.isString(signatureString));
+
+  if (_.isString(bitcoinAddress)) {
+    bitcoinAddress = Address.fromString(bitcoinAddress);
+  }
+  var signature = Signature.fromCompact(Buffer.from(signatureString, 'base64'));
+
+  // recover the public key
+  var ecdsa = new ECDSA();
+  ecdsa.hashbuf = this.magicHash();
+  ecdsa.sig = signature;
+  var publicKey = ecdsa.toPublicKey();
+
+  var signatureAddress = Address.fromPublicKey(publicKey, bitcoinAddress.network);
+
+  // check that the recovered address and specified address match
+  if (bitcoinAddress.toString() !== signatureAddress.toString()) {
+    this.error = 'The signature did not match the message digest';
+  }
+
+  return publicKey.toString();
 };
 
 /**

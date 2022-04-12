@@ -2,10 +2,6 @@
 
 module.exports = {
   MIN_FEE_PER_KB: 0,
-  MAX_FEE_PER_KB: 10000 * 1000, // 10k sat/b
-  MIN_TX_FEE: 0,
-  MAX_TX_FEE: 0.1 * 1e8,
-  MAX_TX_SIZE_IN_KB: 100,
 
   MAX_KEYS: 100,
 
@@ -56,7 +52,76 @@ module.exports = {
       {
         name: 'normal',
         nbBlocks: 2,
+        multiplier: 1.05, // To fix fees < 1sat/byte
         defaultValue: 2000
+      }
+    ],
+    eth: [
+      {
+        name: 'urgent',
+        nbBlocks: 1,
+        defaultValue: 10000000000
+      },
+      {
+        name: 'priority',
+        nbBlocks: 2,
+        defaultValue: 5000000000
+      },
+      {
+        name: 'normal',
+        nbBlocks: 3,
+        defaultValue: 1000000000
+      },
+      {
+        name: 'economy',
+        nbBlocks: 4,
+        defaultValue: 1000000000
+      },
+      {
+        name: 'superEconomy',
+        nbBlocks: 4,
+        defaultValue: 1000000000
+      }
+    ],
+    xrp: [
+      {
+        name: 'normal',
+        nbBlocks: 1, // 3 seconds
+        defaultValue: 12
+      }
+    ],
+    doge: [
+      {
+        name: 'normal',
+        nbBlocks: 2,
+        defaultValue: 100000000
+      }
+    ],
+    ltc: [
+      {
+        name: 'urgent',
+        nbBlocks: 2,
+        defaultValue: 150000
+      },
+      {
+        name: 'priority',
+        nbBlocks: 2,
+        defaultValue: 100000
+      },
+      {
+        name: 'normal',
+        nbBlocks: 3,
+        defaultValue: 100000
+      },
+      {
+        name: 'economy',
+        nbBlocks: 6,
+        defaultValue: 10000
+      },
+      {
+        name: 'superEconomy',
+        nbBlocks: 24,
+        defaultValue: 10000
       }
     ]
   },
@@ -85,7 +150,7 @@ module.exports = {
   UTXO_SELECTION_MAX_FEE_VS_SINGLE_UTXO_FEE_FACTOR: 5,
 
   // Minimum allowed amount for tx outputs (including change) in SAT
-  MIN_OUTPUT_AMOUNT: 5000,
+  MIN_OUTPUT_AMOUNT: 546,
 
   // Number of confirmations from which tx in history will be cached
   // (ie we consider them inmutables)
@@ -107,6 +172,9 @@ module.exports = {
   // Cache time fee levels (in ms)
   FEE_LEVEL_CACHE_DURATION: 6 * 60 * 1000,
 
+  // Cache time for latest copay version (in ms)
+  COPAY_VERSION_CACHE_DURATION: 6 * 60 * 1000,
+
   // Max allowed timespan for notification queries in seconds
   MAX_NOTIFICATIONS_TIMESPAN: 60 * 60 * 24 * 14, // ~ 2 weeks
   NOTIFICATIONS_TIMESPAN: 60,
@@ -119,8 +187,7 @@ module.exports = {
       delayAfter: 8, // begin slowing down responses after the 3rd request
       delayMs: 3000, // slow down subsequent responses by 3 seconds per request
       max: 15, // start blocking after 20 request
-      message:
-        'Too many wallets created from this IP, please try again after an hour'
+      message: 'Too many wallets created from this IP, please try again after an hour'
     },
     estimateFee: {
       windowMs: 60 * 10 * 1000, // 10 min window
@@ -149,5 +216,76 @@ module.exports = {
 
   BE_KEY_SALT: 'bws-auth-keysalt',
 
+  NEW_BLOCK_THROTTLE_TIME_MIN: 5,
+
   BROADCAST_RETRY_TIME: 350, // ms
+
+  /*
+   *      COIN SPECIFIC
+   */
+
+  MAX_TX_SIZE_IN_KB_BTC: 100,
+
+  MAX_TX_SIZE_IN_KB_BCH: 100,
+
+  MAX_TX_SIZE_IN_KB_DOGE: 100,
+
+  // MAX_TX_SIZE_IN_KB_ETH: 500, // not used
+  // MAX_TX_SIZE_IN_KB_XRP: 1000, // not used
+
+  MAX_FEE_PER_KB: {
+    btc: 10000 * 1000, // 10k sat/b
+    bch: 10000 * 1000, // 10k sat/b
+    eth: 1000000000000, // 50 Gwei,
+    xrp: 1000000000000,
+    doge: 100000000 * 100,
+    ltc: 10000 * 1000 // 10k sat/b
+  },
+
+  MIN_TX_FEE: {
+    btc: 0,
+    bch: 0,
+    eth: 0,
+    xrp: 0,
+    doge: 0,
+    ltc: 0
+  },
+
+  MAX_TX_FEE: {
+    btc: 0.05 * 1e8,
+    bch: 0.05 * 1e8,
+    eth: 1 * 1e18, // 1 eth
+    xrp: 1 * 1e6, // 1 xrp
+    doge: 400 * 1e8,
+    ltc: 0.05 * 1e8
+  },
+
+  // ETH
+  DEFAULT_GAS_LIMIT: 60000,
+  DEFAULT_ERC20_GAS_LIMIT: 160000,
+
+  MIN_GAS_LIMIT: 21000,
+
+  // XRP has a non-refundable mininum activation fee / balance
+  MIN_XRP_BALANCE: 20000000,
+
+  // Time to get the latest push notification subscriptions. In ms.
+  PUSH_NOTIFICATION_SUBS_TIME: 10 * 60 * 1000, // 10 min.
+
+  PUSH_NOTIFICATION_LIMIT: 10,
+
+  FIAT_CURRENCIES: [
+    { code: 'USD', name: 'US Dollar' },
+    { code: 'INR', name: 'Indian Rupee' },
+    { code: 'GBP', name: 'Pound Sterling' },
+    { code: 'EUR', name: 'Eurozone Euro' },
+    { code: 'CAD', name: 'Canadian Dollar' },
+    { code: 'COP', name: 'Colombian Peso' },
+    { code: 'NGN', name: 'Nigerian Naira' },
+    { code: 'BRL', name: 'Brazilian Real' },
+    { code: 'ARS', name: 'Argentine Peso' },
+    { code: 'AUD', name: 'Australian Dollar' },
+    { code: 'JPY', name: 'Japanese Yen' },
+    { code: 'NZD', name: 'New Zealand Dollar' }
+  ]
 };

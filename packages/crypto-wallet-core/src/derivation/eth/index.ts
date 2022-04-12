@@ -1,9 +1,8 @@
-import { ec } from 'elliptic';
-import { pubToAddress } from 'ethereumjs-util';
 import { IDeriver } from '..';
 
+import utils from 'web3-utils';
+
 const BitcoreLib = require('bitcore-lib');
-const secp = new ec('secp256k1');
 
 export class EthDeriver implements IDeriver {
   padTo32(msg) {
@@ -16,8 +15,8 @@ export class EthDeriver implements IDeriver {
     return msg;
   }
 
-  deriveAddress(network, pubKey, addressIndex, isChange) {
-    const xpub = new BitcoreLib.HDPublicKey(pubKey, network);
+  deriveAddress(network, xpubkey, addressIndex, isChange) {
+    const xpub = new BitcoreLib.HDPublicKey(xpubkey, network);
     const changeNum = isChange ? 1 : 0;
     const path = `m/${changeNum}/${addressIndex}`;
     const derived = xpub.derive(path).publicKey;
@@ -25,13 +24,12 @@ export class EthDeriver implements IDeriver {
   }
 
   addressFromPublicKeyBuffer(pubKey: Buffer): string {
-    const ecKey = secp.keyFromPublic(pubKey);
-    const ecPub = ecKey.getPublic().toJSON();
-    const paddedBuffer = Buffer.concat([
-      this.padTo32(new Buffer(ecPub[0].toArray())),
-      this.padTo32(new Buffer(ecPub[1].toArray()))
-    ]);
-    return `0x${pubToAddress(paddedBuffer).toString('hex')}`;
+    const ecPoint = new BitcoreLib.PublicKey.fromBuffer(pubKey).point;
+    const x = ecPoint.getX().toBuffer({ size: 32 });
+    const y = ecPoint.getY().toBuffer({ size: 32 });
+    const paddedBuffer = Buffer.concat([x, y]);
+    const address = utils.keccak256(`0x${paddedBuffer.toString('hex')}`).slice(26);
+    return utils.toChecksumAddress(address);
   }
 
   derivePrivateKey(network, xPriv, addressIndex, isChange) {

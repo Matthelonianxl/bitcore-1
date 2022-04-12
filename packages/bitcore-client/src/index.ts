@@ -1,6 +1,8 @@
-import { Wallet } from './wallet';
-import { Storage } from './storage';
-import TxProvider from './providers/tx-provider';
+import * as CryptoWalletCore from 'crypto-wallet-core';
+import 'source-map-support/register';
 import { Client } from './client';
-import { ParseApiStream } from './stream-util';
-export { Wallet, TxProvider, Client, Storage, ParseApiStream };
+import { Encryption } from './encryption';
+import { Storage } from './storage';
+import { ParseApiStream, StreamUtil } from './stream-util';
+import { Wallet } from './wallet';
+export { Wallet, Client, Storage, ParseApiStream, Encryption, StreamUtil, CryptoWalletCore };
