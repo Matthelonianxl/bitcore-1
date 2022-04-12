@@ -1,0 +1,24 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.22.1
+ignore: {}
+# patches apply the minimum changes required to fix a vulnerability
+patch:
+  SNYK-JS-LODASH-567746:
+    - crypto-rpc > ripple-binary-codec > lodash:
+        patched: '2022-04-12T02:53:31.522Z'
+    - ripple-lib > ripple-binary-codec > lodash:
+        patched: '2022-04-12T02:53:31.522Z'
+    - crypto-rpc > ripple-lib > lodash:
+        patched: '2022-04-12T02:53:31.522Z'
+    - winston > async > lodash:
+        patched: '2022-04-12T02:53:31.522Z'
+    - crypto-rpc > ripple-hashes > ripple-binary-codec > lodash:
+        patched: '2022-04-12T02:53:31.522Z'
+    - crypto-rpc > ripple-lib > ripple-binary-codec > lodash:
+        patched: '2022-04-12T02:53:31.522Z'
+    - crypto-rpc > ripple-lib > ripple-lib-transactionparser > lodash:
+        patched: '2022-04-12T02:53:31.522Z'
+    - ripple-lib > lodash:
+        patched: '2022-04-12T02:53:31.522Z'
+    - ripple-lib > ripple-lib-transactionparser > lodash:
+        patched: '2022-04-12T02:53:31.522Z'
