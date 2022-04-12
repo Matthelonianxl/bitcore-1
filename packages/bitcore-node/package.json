@@ -43,7 +43,9 @@
     "lint:style": "prettier --check 'src/**/*.ts'",
     "fix": "npm run fix:style && npm run fix:lint",
     "fix:lint": "tslint --fix -c ../../tslint.json 'src/**/*.ts'",
-    "fix:style": "prettier --write 'src/**/*.ts'"
+    "fix:style": "prettier --write 'src/**/*.ts'",
+    "prepare": "npm run snyk-protect",
+    "snyk-protect": "snyk-protect"
   },
   "nyc": {
     "reporter": [
@@ -117,7 +119,9 @@
     "through2": "2.0.3",
     "underscore": "1.8.3",
     "web3": "1.7.0",
-    "winston": "3.2.0"
+    "winston": "3.2.0",
+    "@snyk/protect": "latest"
   },
-  "gitHead": "012cc0216a9bc6b195035855bd17149bad41acd1"
+  "gitHead": "012cc0216a9bc6b195035855bd17149bad41acd1",
+  "snyk": true
 }
