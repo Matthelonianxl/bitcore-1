@@ -30,7 +30,7 @@
     "bitcore-mnemonic": "^8.25.25",
     "commander": "2.15.1",
     "crypto-wallet-core": "^8.25.27",
-    "elliptic": "^6.5.3",
+    "elliptic": "^6.5.7",
     "level-js": "4.0.2",
     "leveldown": "5.4.1",
     "levelup": "4.3.2",
